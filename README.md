@@ -1,40 +1,34 @@
- def lcs(a,b):
-    	lena=len(a)
-    	lenb=len(b)
-    	c=[[0 for i in range(lenb+1)] for j in range(lena+1)]
-    	flag=[[0 for i in range(lenb+1)] for j in range(lena+1)]
-    	for i in range(lena):
-    		for j in range(lenb):
-    			if a[i]==b[j]:
-    				c[i+1][j+1]=c[i][j]+1
-    				flag[i+1][j+1]='ok'
-    			elif c[i+1][j]>c[i][j+1]:
-    				c[i+1][j+1]=c[i+1][j]
-    				flag[i+1][j+1]='left'
-    			else:
-    				c[i+1][j+1]=c[i][j+1]
-    				flag[i+1][j+1]='up'
-    	return c,flag
+    def find_lcseque(s1, s2): 
+    	 # 生成字符串长度加1的0矩阵，m用来保存对应位置匹配的结果
+    	m = [ [ 0 for x in range(len(s2)+1) ] for y in range(len(s1)+1) ] 
+    	# d用来记录转移方向
+    	d = [ [ None for x in range(len(s2)+1) ] for y in range(len(s1)+1) ] 
      
-    def printLcs(flag,a,i,j):
-    	if i==0 or j==0:
-    		return
-    	if flag[i][j]=='ok':
-    		printLcs(flag,a,i-1,j-1)
-    		print(a[i-1],end='')
-    	elif flag[i][j]=='left':
-    		printLcs(flag,a,i,j-1)
-    	else:
-    		printLcs(flag,a,i-1,j)
-    		
-    a='ABCBDAB'
-    b='BDCABA'
-    c,flag=lcs(a,b)
-    for i in c:
-    	print(i)
-    print('')
-    for j in flag:
-    	print(j)
-    print('')
-    printLcs(flag,a,len(a),len(b))
-    print('')
+    	for p1 in range(len(s1)): 
+    		for p2 in range(len(s2)): 
+    			if s1[p1] == s2[p2]:            #字符匹配成功，则该位置的值为左上方的值加1
+    				m[p1+1][p2+1] = m[p1][p2]+1
+    				d[p1+1][p2+1] = 'ok'          
+    			elif m[p1+1][p2] > m[p1][p2+1]:  #左值大于上值，则该位置的值为左值，并标记回溯时的方向
+    				m[p1+1][p2+1] = m[p1+1][p2] 
+    				d[p1+1][p2+1] = 'left'          
+    			else:                           #上值大于左值，则该位置的值为上值，并标记方向up
+    				m[p1+1][p2+1] = m[p1][p2+1]   
+    				d[p1+1][p2+1] = 'up'         
+    	(p1, p2) = (len(s1), len(s2)) 
+    	print numpy.array(d)
+    	s = [] 
+    	while m[p1][p2]:    #不为None时
+    		c = d[p1][p2]
+    		if c == 'ok':   #匹配成功，插入该字符，并向左上角找下一个
+    			s.append(s1[p1-1])
+    			p1-=1
+    			p2-=1 
+    		if c =='left':  #根据标记，向左找下一个
+    			p2 -= 1
+    		if c == 'up':   #根据标记，向上找下一个
+    			p1 -= 1
+    	s.reverse() 
+    	return ''.join(s) 
+     
+    print find_lcseque('abdfg','abcdfg')
